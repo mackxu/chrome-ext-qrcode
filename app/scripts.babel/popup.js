@@ -2,16 +2,18 @@
 
 let TINY_URL_SERVER = 'http://dwz.cn/create.php';
 
+// 获取当前标签页的URL
 function getCurrentTabUrl() {
   return new Promise((resolve, reject) => {
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       if(tabs && tabs.length > 0) {
         let url = tabs[0].url;
         if(url) {
+          $('#url').text(url);
           return resolve(url)
         }
       }
-      reject()
+      reject(new Error('get current tab url fail!'))
     })
   })
 }
@@ -35,27 +37,16 @@ function getTinyUrl(url) {
     return res.tinyurl;             // 获取百度短链
   })
 }
-
+// 传入url生成二维码
 function createQrcode(url) {
   $('#qr-code').qrcode({ text: url, width: 250, height: 250 });
 }
 
 $(function() {
   getCurrentTabUrl()
-    .then(url => {
-      $('#url').text(url);
-      return url;
-    })
     .then(url => getTinyUrl(url))
     .then(url => createQrcode(url))
     .catch(err => {
-      let msg
-      try {
-        msg = JSON.parse(err.message);
-        msg.longurl && createQrcode(msg.longurl);
-      } catch(e) {
-        msg = err.message;
-      }
-      console.log(msg);
+      console.log(err);
     })
 })
