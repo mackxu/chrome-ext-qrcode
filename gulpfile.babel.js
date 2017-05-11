@@ -31,8 +31,7 @@ function lint(files, options) {
 gulp.task('lint', lint('app/scripts.babel/**/*.js', {
   env: {
     es6: true
-  },
-  quotes: 0
+  }
 }));
 
 gulp.task('images', () => {

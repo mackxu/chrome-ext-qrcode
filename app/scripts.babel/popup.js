@@ -2,10 +2,6 @@
 
 let TINY_URL_SERVER = 'http://dwz.cn/create.php';
 
-function promisePost(url, settings) {
-  return Promise.resolve($.post(url, settings))
-}
-
 // 获取当前标签页的URL
 function getCurrentTabUrl() {
   return new Promise((resolve, reject) => {
@@ -24,16 +20,12 @@ function getCurrentTabUrl() {
 
 // 获取短链接
 function getTinyUrl(url) {
-  // return fetch(TINY_URL_SERVER, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/x-www-form-urlencoded'
-  //   },
-  //   body: 'url=' + url
-  // })
-  
-  return Promise.resolve($.post(TINY_URL_SERVER, { url }))
-  // .then(res => res.json())
+  return Promise.resolve($.ajax({
+    url: TINY_URL_SERVER, 
+    method: 'POST', 
+    data: { url }, 
+    timeout: 200 }
+  ))
   .then(res => {
     console.log(res);
     res = JSON.parse(res);
