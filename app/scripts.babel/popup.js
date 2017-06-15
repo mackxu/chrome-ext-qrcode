@@ -6,12 +6,8 @@ let TINY_URL_SERVER = 'http://dwz.cn/create.php';
 function getCurrentTabUrl() {
   return new Promise((resolve, reject) => {
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      if(tabs && tabs.length > 0) {
-        let url = tabs[0].url;
-        if(url) {
-          $('#url-src').text(url).attr('title', url);
-          return resolve(url)
-        }
+      if(tabs && tabs.length > 0 && tabs[0].url) {
+        return resolve(tabs[0].url);
       }
       reject(new Error('get current tab url fail!'))
     })
@@ -24,28 +20,32 @@ function getTinyUrl(url) {
     url: TINY_URL_SERVER, 
     method: 'POST', 
     data: { url }
-  }))
-  .then(res => {
-    console.log(res);
-    res = JSON.parse(res);
-    if(res.status !== 0) {
-      console.log('fetch tinyurl fail:', res.err_msg);
-      return url;
-    }
-    return res.tinyurl;             // 获取百度短链
-  })
+  }));
 }
 // 传入url生成二维码
 function createQrcode(url) {
   $('#qr-code').qrcode({ text: url, width: 250, height: 250 });
 }
 
-$(function() {
-  getCurrentTabUrl()
-    .then(url => getTinyUrl(url))
-    .then(url => createQrcode(url))
-    .catch(err => {
-      // 需要处理不同类型的错误，觉得好棘手
-      console.log(err);
-    })
-})
+async function start() {
+  try {
+    let tinyUrl = '';
+    let tabUrl = await getCurrentTabUrl();
+    let tinyUrlRes = await getTinyUrl(tabUrl);
+    
+    tinyUrlRes = JSON.parse(tinyUrlRes);
+    if(tinyUrlRes.status === 0) {
+      tinyUrl = tinyUrlRes.tinyurl;
+      console.log('fetch tinyurl success:', tinyUrl);
+    }else {
+      console.log('fetch tinyurl fail:', tinyUrlRes.err_msg);
+    }
+    // 创建二维码
+    createQrcode(tinyUrl || tabUrl);
+    $('#url-src').text(tabUrl).attr('title', tabUrl);
+  } catch(e) {
+    console.log(e);
+  }
+}
+
+start();
