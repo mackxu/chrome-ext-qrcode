@@ -9,7 +9,7 @@ function getCurrentTabUrl() {
       if(tabs && tabs.length > 0) {
         let url = tabs[0].url;
         if(url) {
-          $('#url').text(url);
+          $('#url-src').text(url).attr('title', url);
           return resolve(url)
         }
       }
@@ -23,15 +23,14 @@ function getTinyUrl(url) {
   return Promise.resolve($.ajax({
     url: TINY_URL_SERVER, 
     method: 'POST', 
-    data: { url }, 
-    timeout: 200 }
-  ))
+    data: { url }
+  }))
   .then(res => {
     console.log(res);
     res = JSON.parse(res);
     if(res.status !== 0) {
       console.log('fetch tinyurl fail:', res.err_msg);
-      return res.longurl;
+      return url;
     }
     return res.tinyurl;             // 获取百度短链
   })
@@ -46,6 +45,7 @@ $(function() {
     .then(url => getTinyUrl(url))
     .then(url => createQrcode(url))
     .catch(err => {
+      // 需要处理不同类型的错误，觉得好棘手
       console.log(err);
     })
 })
