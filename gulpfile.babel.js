@@ -31,8 +31,7 @@ function lint(files, options) {
 gulp.task('lint', lint('app/scripts.babel/**/*.js', {
   env: {
     es6: true
-  },
-  quotes: 0
+  }
 }));
 
 gulp.task('images', () => {
@@ -83,7 +82,7 @@ gulp.task('chromeManifest', () => {
 gulp.task('babel', () => {
   return gulp.src('app/scripts.babel/**/*.js')
       .pipe($.babel({
-        presets: ['es2015']
+        presets: ['es2015', 'es2016']
       }))
       .pipe(gulp.dest('app/scripts'));
 });
