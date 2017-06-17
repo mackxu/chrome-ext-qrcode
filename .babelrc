@@ -1,3 +1,18 @@
 {
-  "presets": ["es2015", "es2016"]
+	"presets": ["es2015"],
+  	"plugins": [
+  		["fast-async", {
+	      "env": {
+	        "augmentObject": false,
+	        "dontMapStackTraces": true,
+	        "dontInstallRequireHook": true
+	      },
+	      "compiler": {
+	        "promises": true,
+	        "generators": false
+	      },
+	      "runtimePattern": null,
+	      "useRuntimeModule" :false
+	    }]
+  	]
 }

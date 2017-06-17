@@ -27,7 +27,7 @@ function createQrcode(url) {
   $('#qr-code').qrcode({ text: url, width: 250, height: 250 });
 }
 
-async function start() {
+(async () => {
   try {
     let tinyUrl = '';
     let tabUrl = await getCurrentTabUrl();
@@ -46,6 +46,4 @@ async function start() {
   } catch(e) {
     console.log(e);
   }
-}
-
-start();
+})()

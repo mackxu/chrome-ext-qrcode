@@ -24,14 +24,16 @@ function lint(files, options) {
   return () => {
     return gulp.src(files)
       .pipe($.eslint(options))
-      .pipe($.eslint.format());
+      .pipe($.eslint.format())
+      .pipe($.eslint.failAfterError());
   };
 }
 
 gulp.task('lint', lint('app/scripts.babel/**/*.js', {
   env: {
     es6: true
-  }
+  },
+  parserOptions: { ecmaVersion: 8 }
 }));
 
 gulp.task('images', () => {
@@ -81,9 +83,7 @@ gulp.task('chromeManifest', () => {
 
 gulp.task('babel', () => {
   return gulp.src('app/scripts.babel/**/*.js')
-      .pipe($.babel({
-        presets: ['es2015', 'es2016']
-      }))
+      .pipe($.babel())
       .pipe(gulp.dest('app/scripts'));
 });
 
